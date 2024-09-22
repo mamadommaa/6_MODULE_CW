@@ -1,19 +1,24 @@
 import { ChangeEvent, useState } from "react";
 import { USERS } from "../../data";
-import { Transit } from "../../PagesProvider";
+import { Transit, usePages } from "../../PagesProvider";
 import "./UsersPage.css";
 
 export function UsersPage() {
-	const [searchName, setSearchName] = useState<string>("");
+	const { setSearchParam, search } = usePages();
 
-	const handleSearchName = (event: ChangeEvent<HTMLInputElement>): void => {
-		const { value } = event.target;
-		setSearchName(value);
-	};
+	// Извлекаем имя для поиска из параметров поиска
+	const searchName = new URLSearchParams(search).get("searchName") || "";
 
+	// Фильтрация пользователей на основе введенного имени
 	const filteredUsers = USERS.filter(({ fullName }) =>
 		fullName.toLowerCase().includes(searchName)
 	);
+
+	// Обработчик изменений в поле ввода
+	const handleSearchName = (event: ChangeEvent<HTMLInputElement>): void => {
+		const { value } = event.target;
+		setSearchParam("searchName", value.toLowerCase());
+	};
 
 	return (
 		<div className="usersPage">
